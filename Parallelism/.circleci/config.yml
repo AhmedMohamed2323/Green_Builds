@@ -15,6 +15,7 @@ jobs:
           name: Run Goodbye test
           command: |
             bash src/test_goodbye.sh
+      parallelism: 2
 
 workflows:
   test-workflow:
