@@ -1,24 +1,14 @@
 version: 2.1
 
 jobs:
-  test:
-    docker:
-      - image: cimg/base:2022.03
-    parallelism: 2
-
+  build:
+    docker: # use the docker executor type; machine and macos executors are also supported
+      - image: cimg/base:2022.03 # the primary container, where your job's commands are run
     steps:
-      - checkout
-      # These two tests should run in parallel. Make it so!
-      - run:
-          name: Run Hello test
-          command: |
-            bash src/test_hello.sh
-      - run:
-          name: Run Goodbye test
-          command: |
-            bash src/test_goodbye.sh
+      - checkout # check out the code in the project directory
+      - run: echo "hello world" # run the `echo` command
 
 workflows:
-  test-workflow:
+  build-workflow:
     jobs:
-      - test
+      - build
