@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@2.6.3
+  ruby: circleci/ruby@1.8.0
 
 jobs:
   build:
@@ -9,9 +9,9 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      # Add step below to install Ruby version 2.6.3
+      # Add step below to install Ruby version 1.8.0
       - ruby/install:
-          version: '2.6.3'
+          version: '1.8.0'
 
       
       - run: ruby -v
