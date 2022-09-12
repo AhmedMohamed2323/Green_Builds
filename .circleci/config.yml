@@ -9,6 +9,6 @@ jobs:
       - checkout
       - ruby/install:
           version: '2.6.3'
-      - run: echo "Ruby 2.6.3 has been installed"
+      - run: ruby -v
 workflows: null
 
