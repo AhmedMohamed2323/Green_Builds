@@ -5,8 +5,7 @@ jobs:
     docker: cimg/base:2022.03
     steps:
       - checkout
-      - run
-        name: HI "'run' statements can actually contain a 'name' and 'command' argument as well"
+      - run: "'run' statements can actually contain a 'name' and 'command' argument as well"
         command: | 
           echo "You can even have multiline commands."
       - restore_cache:
