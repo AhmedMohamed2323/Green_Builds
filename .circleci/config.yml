@@ -1,25 +1,24 @@
 version: 2.1
 
 jobs:
-  test:
+  build:
     docker:
       - image: cimg/base:2022.03
-    parallelism: 2
-
+      - image: cimg/postgres:14.0
     steps:
-      - checkout
-      # These two tests should run in parallel. Make it so!
+      - checkout # check out the code in the project directory
+      - run: echo "hello world" # run the `echo` command
       - run:
-          name: Run Hello test
-          command: |
-            bash src/test_hello.sh
+          name: install dockerize # This is a utility that will attempt to connect to a database, in place of an application for this sample.
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
       - run:
-          name: Run Goodbye test
-          command: |
-            bash src/test_goodbye.sh
+          name: Wait for db # If no database is found in 1 minute the job will fail.
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
 workflows:
-  test-workflow:
+  build-workflow:
     jobs:
-      - test
+      - build
 
