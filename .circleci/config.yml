@@ -1,24 +1,14 @@
 version: 2.1
 
 jobs:
-  test:
-    docker:
+  build:
+      docker:
       - image: cimg/base:2022.03
-    parallelism: 2
-
-    steps:
-      - checkout
-      # These two tests should run in parallel. Make it so!
-      - run:
-          name: Run Hello test
-          command: |
-            bash src/test_hello.sh
-      - run:
-          name: Run Goodbye test
-          command: |
-            bash src/test_goodbye.sh
+      steps:
+           - checkout # check out the code in the project directory
+           - run: echo "hello world" # run the `echo` command
 
 workflows:
-  test-workflow:
+  build-wo rkflow:
     jobs:
-      - test
+      - build
