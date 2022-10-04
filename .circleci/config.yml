@@ -162,6 +162,16 @@ jobs:
           <<: *basic_docker_build
       - run: docker version
 
+  machine_dlc:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - run: which docker
+      - run: docker -v
+      - run:
+          <<: *basic_docker_build
+      - run: docker version
+
   # feature jobs
   contexts:
     <<: *contexts_defaults
@@ -265,7 +275,7 @@ workflows:
       - machine
       - remote_docker
       - docker_layer_caching
-      
+      - machine_dlc
   
   aws_jobs:
     jobs:
