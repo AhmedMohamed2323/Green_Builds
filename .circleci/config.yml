@@ -1,8 +1,51 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-orbs:
-  cypress: cypress-io/cypress@2.2.0
+
+# Define a job to be invoked later in a workflow.
+
+jobs:
+  lint:
+    executor: go_docker
+    steps:
+      - checkout
+      - run:
+          name: Lint the Go cmd/web
+          command: gofmt -d ./cmd/web
+      - run:
+          name: Lint the Go pkg/
+          command: gofmt -d ./pkg
+  unit-tests:
+    executor: go_docker
+    steps:
+      - checkout
+      - run:
+          name: Run cmd/web Go unit tests
+          command: go test ./cmd/web
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build:
+  version: 2
+  build-test-and-deploy:
     jobs:
-      - cypress/run
+      - lint
+      # - code coverage
+      - go-static-analyzer
+      - unit-tests:
+          requires:
+            - lint
+            - go-static-analyzer
+      - cypress/run:
+          store_artifacts: true
+          requires:
+            - lint
+            - go-static-analyzer
+      - deploy:
+          requires:
+            - unit-tests
+          filters:
+            branches:
+              only:
+                - main
      
