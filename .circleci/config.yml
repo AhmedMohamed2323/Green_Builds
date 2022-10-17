@@ -1,10 +1,41 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
+orbs:
+  cypress: cypress-io/cypress@1.29.0
+
+executors:
+  machine_no_dlc:
+    machine:
+      image: ubuntu-2004:202107-02
+  machine_with_dlc:
+    machine:
+      image: ubuntu-2004:202107-02
+      docker_layer_caching: true
+  go_docker:
+    docker:
+      - image: cimg/go:1.17.1
+        auth: 
+          username: $ahmedmo23
+          password: $Waterbreak2323!
+
+commands:
+  start_container_and_verify:
+    description: Start container and verify
+    steps:
+      - run:
+          name: Start container and verify
+          command: |
+            echo $DOCKER_PASS | docker login -u $DOCKER_USERNAME --password-stdin
+            docker-compose up -d
+            docker run --network container:snippet \
+              appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://localhost:4000 |
 
 jobs:
+  build:
+    executor: machine_no_dlc
+    steps:
+      - checkout
+      - start_container_and_verify
   lint:
     executor: go_docker
     steps:
@@ -22,9 +53,38 @@ jobs:
       - run:
           name: Run cmd/web Go unit tests
           command: go test ./cmd/web
+  code-coverage:
+    executor: go_docker
+    steps:
+      - checkout
+      - run: mkdir /tmp/code_coverage/
+      - run:
+          name: Run code coverage
+          command: go test -coverprofile=/tmp/code_coverage/profile.out ./...
+      - store_artifacts:
+          path: /tmp/code_coverage/profile.out
+  go-static-analyzer:
+    executor: go_docker
+    steps:
+      - checkout
+      - run:
+          name: Run static analyzer on cmd/web
+          command: go vet ./cmd/web
+      - run:
+          name: Run static analyzer on pgk
+          command: |
+                    go vet ./pkg/forms
+                    go vet ./pkg/models
+                    go vet ./pkg/models/mock
+                    go vet ./pkg/models/mysql
+  deploy:
+    executor: machine_no_dlc
+    steps:
+      # - push-image//
+      #   - setup-remote-docker
+      #   - repo: #todo create context
+      - run: echo I'm going to deploy I promise
 
-# Invoke jobs via workflows ////
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   version: 2
   build-test-and-deploy:
@@ -32,6 +92,7 @@ workflows:
       - lint
       # - code coverage
       - go-static-analyzer
+      - build
       - unit-tests:
           requires:
             - lint
@@ -39,13 +100,16 @@ workflows:
       - cypress/run:
           store_artifacts: true
           requires:
+            - build
             - lint
             - go-static-analyzer
       - deploy:
           requires:
             - unit-tests
+            - cypress/run
           filters:
             branches:
               only:
                 - main
+
      
