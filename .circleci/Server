@@ -1,0 +1,95 @@
+global:
+  domainName: ahmed-server4.eks-dev.sphereci.com
+  license: '{"version":"v1","expiry-date":"2066-01-02T15:04:05Z","hard-expiry-date":"2066-01-02T15:04:05Z","seats":1000,"hard-seats":1000,"type":"paid","signature":"+xdgs3FA5JtGKfa92uYKSVFKZhEV9ksb0PHpIZFZ9fji2hfp5cq7APD+dpdSCmTc+Qsl0GilQpueOWlQe2gpDw=="}'
+  container:
+    registry: cciserver.azurecr.io
+    org:
+  
+apiToken: "api-token"
+sessionCookieKey: "FMeCXJM4on9nDd1z"
+
+keyset:
+  signing: ''
+  encryption: ''
+
+nomad:
+  server:
+    gossip:
+      encryption:
+        key: "7MiH4Zf61CCmM2NH1W8cbTT2jc0G8vmh"
+    rpc:
+      mTLS:
+        enabled: false
+        CACertificate: null
+        certificate: null
+        privateKey: null
+
+object_storage:
+  bucketName: '<bucket-name>'
+  s3:
+    enabled: true
+    endpoint: "https://s3.us-east-2.amazonaws.com" 
+    region: "us-east-2"
+    accessKey: "<access-key>"
+    secretKey: "<secret-key"
+
+github:
+  clientId: "<github_oauth_client_id>"
+  clientSecret: "<github_oauth_client_secret>"
+
+vm_service:
+  providers:
+    ec2:
+      enabled: true
+      region: "us-east-2"
+      subnets:
+      - "subnet-41da6828"
+      securityGroupId: "sg-0d58d25f1b8604408"
+      accessKey: "<access-key>"
+      secretKey: "<secret-key"
+      tags:
+      - team
+      - custeng
+      - owner
+      - vijay
+
+mongodb:
+  auth:
+    rootPassword: ""
+    password: ""
+
+postgresql:
+  auth:
+    postgresPassword: ""
+
+pusher:
+  secret: ""
+
+rabbitmq:
+  auth:
+    password: ""
+    erlangCookie: ""
+
+nginx:
+  replicas: 1
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 
+  aws_acm:
+    enabled: true
+  private_load_balancers: false
+  resources:
+    requests:
+      cpu: "2000m"
+      memory: "2048Mi"
+    limits:
+      cpu: "4096m"
+      memory: "4096Mi"
+
+
+kubectl create secret docker-registry regcred -n ahmed-server4 \
+  --docker-server=cciserver.azurecr.io \
+  --docker-username=customer-engineering-dev \
+  --docker-password=ktey7uvOieEjoOVkrsykOCei+VCet3Tk \
+  --docker-email=ahmed.mohamed@circleci.com
