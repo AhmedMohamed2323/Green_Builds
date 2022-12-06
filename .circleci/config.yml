@@ -1,21 +1,20 @@
-version: '2.1'
-orbs:
-  node: circleci/node@x.y
+version: 2.1
+
 jobs:
-  install-node-example:
-    docker:
-      - image: 'cimg/base:stable'
+  build:
+    docker: # use the docker executor type; machine and macos executors are also supported
+      - image: cimg/base:2022.03 # the primary container, where your job's commands are run
     steps:
-      - checkout
-      - node/install:
-          install-yarn: true
-          node-version: '16.13'
-      - run: node --version
+      - checkout # check out the code in the project directory
+      - run: echo "hello worldddddddddddddddd"  ##run the `echo` command
+
 workflows:
-  test_my_app:
+  build-workflow:
     jobs:
-      - install-node-example
+      - build
+
 
 
 
 # VS Code Extension Version: 1.0.0
+
