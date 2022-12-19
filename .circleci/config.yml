@@ -1,17 +1,11 @@
 version: 2.1
-
-jobs:
-  build:
-    docker: # use the docker executor type; machine and macos executors are also supported
-      - image: cimg/base:2022.03 # the primary container, where your job's commands are run
-    steps:
-      - checkout # check out the code in the project directory
-      - run: echo "hello worldddddddddddddddd"  ##run the `echo` command
-
+orbs:
+  cypress: cypress-io/cypress@1
 workflows:
-  build-workflow:
+  build:
     jobs:
-      - build
+      - cypress/run
+
 
 
 
